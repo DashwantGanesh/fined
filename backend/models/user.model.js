@@ -17,6 +17,11 @@ const userSchema =new mongoose.Schema({
         type:String,
         required:true
     },
+    role:{
+        type:String,
+        enum:['user','bank'],
+        required:true
+    },
     profile:{
         course:{type:String},
         courseDuration:{type:Number},
