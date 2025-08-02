@@ -35,7 +35,7 @@ export const postLoan=async(req,res)=>{
     }
 }
 
-//getting loan by filter 
+//getting loan by filter (student)
 
 export const getAllLoans=async (req,res)=>{
     try {
@@ -69,4 +69,49 @@ export const getAllLoans=async (req,res)=>{
     } catch (error) {
         console.log(error);
     }
+}
+
+//getting loan by id(student)
+export const getLoanById=async (req,res)=>{
+ try {
+       const loanId=req.params.id;
+
+    const loan=await Loan.findById(loanId).populate({
+        path:"applications"
+    });
+
+    if(!loan){
+       return res.status(400).json({
+        message:"Loan not found",
+        success:false
+       });
+    }
+
+    return res.status(200).json({loan,success:true});
+ } catch (error) {
+    console.log(error);
+ }
+}
+
+//getting loans created by admin(bank)
+
+export const getAdminLoans=async(req,res)=>{
+   try {
+     const adminId=req.id;
+
+    const loans=await Loan.find({created_by:adminId}).populate("bank")
+            .sort({ createdAt: -1 });
+
+    if(!loans){
+       return res.status(400).json({
+        message:"Loans not found",
+        success:false,
+       });
+    }
+
+    return res.status(200).json({loans,success:true});
+   } catch (error) {
+    console.log(error);
+    
+   }
 }

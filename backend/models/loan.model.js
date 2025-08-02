@@ -32,7 +32,7 @@ const loanSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    application: [
+    applications: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Application",

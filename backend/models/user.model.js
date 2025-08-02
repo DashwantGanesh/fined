@@ -19,7 +19,7 @@ const userSchema =new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['user','bank'],
+        enum:['recipient','bank'],
         required:true
     },
     profile:{
