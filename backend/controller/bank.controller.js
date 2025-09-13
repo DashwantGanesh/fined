@@ -1,4 +1,4 @@
-import { Bank } from "../models/bank.model";
+import { Bank } from "../models/bank.model.js";
 
 //registeration of bank
 export const registerBank=async(req,res)=>{

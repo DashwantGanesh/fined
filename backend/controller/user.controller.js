@@ -1,13 +1,15 @@
 import jwt from "jsonwebtoken";
 import env from "dotenv";
-import { User } from "../models/user.model";
+import bcrypt from "bcryptjs";
+
+import { User } from "../models/user.model.js";
 env.config();
 
 //registration User
 export const register = async (req,res) =>{
     try {
-        const {fullname,email,phoneNumber,password}=req.body;
-        if(!fullname || !email || !phoneNumber || !password){
+        const {fullname,email,phoneNumber,password,role}=req.body;
+        if(!fullname || !email || !phoneNumber || !password || !role){
            return req.status(400).json({
                 message:"Data incomplete",
                 success:false,
@@ -28,6 +30,7 @@ export const register = async (req,res) =>{
             email,
             phoneNumber,
             password:hashedPassword,
+            role
         });
 
         return res.status(201).json({
