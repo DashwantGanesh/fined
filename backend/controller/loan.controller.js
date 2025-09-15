@@ -44,9 +44,14 @@ export const getAllLoans=async (req,res)=>{
 
         const query={
             $or:[                                 //or operator since we are filtering by multiple conditions
-                {title:{$regex:keyword,$options:"i"}},  //$regex: keyword: This tells MongoDB to match the title field against the provided keyword using a regular expression (Regex). 
-                {descriptions:{$regex:keyword,$options:"i"}}, //"i"=makes it case insensitive
-                ...(isNumeric ? [{ tenure: parseInt(keyword) }] : [])
+                  //$regex: keyword: This tells MongoDB to match the title field against the provided keyword using a regular expression (Regex). 
+                 //"i"=makes it case insensitive
+                
+                ...(isNumeric ? [
+                    { tenure: parseInt(keyword) },
+                    {loanAmount:parseInt(keyword)},
+                    {interestRate:parseFloat(keyword)}
+                ] : [])
             ]
         };
         //query made
