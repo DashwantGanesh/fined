@@ -1,8 +1,9 @@
-import { getAdminLoans, getAllLoans, getLoanById, postLoan } from "../controller/loan.controller";
-import isAuthenticated from "../middleware/isAuthenticated";
+import express from "express";
+import { getAdminLoans, getAllLoans, getLoanById, postLoan } from "../controller/loan.controller.js";
+import isAuthenticated from "../middleware/isAuthenticated.js";
 
 
-const router=express.router();     //create express router app for handling all routes within here
+const router=express.Router();     //create express router app for handling all routes within here
 
 router.route("/post").post(isAuthenticated,postLoan);
 router.route("/get").get(isAuthenticated,getAllLoans);

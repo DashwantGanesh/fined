@@ -46,9 +46,9 @@ export const register = async (req,res) =>{
 //login
 export const login=async (req,res)=>{
     try {
-        const {email,password}=req.body;
-        if(!email || !password){
-            return req.status(400).json({
+        const {email,password,role}=req.body;
+        if(!email || !password || !role){
+            return res.status(400).json({
                 message:"Data incomplete",
                 success:false
             });
@@ -63,10 +63,17 @@ export const login=async (req,res)=>{
         if(!isPasswordMatched){
             return res.status(400).json({message:"Incorrect Password"});
         }
+        if(role != user.role){
+            return res.status(403).json({
+                message:"Access Denied.Enter Valid Role",
+                success:"false"
+            });
+        }
 
         //creating token
         const tokenData={
             userId:user._id,
+            role:user.role
         };
 
         const token= jwt.sign(tokenData,process.env.SECRET_KEY,{
@@ -78,6 +85,7 @@ export const login=async (req,res)=>{
             fullname:user.fullname,
             email:user.email,
             phoneNumber:user.phoneNumber,
+            role:user.role,
             profile:user.profile
         }
 
