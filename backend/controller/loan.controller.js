@@ -39,37 +39,52 @@ export const postLoan=async(req,res)=>{
 
 export const getAllLoans=async (req,res)=>{
     try {
-        const keyword=req.query.keyword || "";
-        const isNumeric = !isNaN(keyword);
+const keyword = req.query.keyword?.trim() || "";
 
-        const query={
-            $or:[                                 //or operator since we are filtering by multiple conditions
-                  //$regex: keyword: This tells MongoDB to match the title field against the provided keyword using a regular expression (Regex). 
-                 //"i"=makes it case insensitive
-                
-                ...(isNumeric ? [
-                    { tenure: parseInt(keyword) },
-                    {loanAmount:parseInt(keyword)},
-                    {interestRate:parseFloat(keyword)}
-                ] : [])
-            ]
-        };
-        //query made
-        //finding loan based on query
-        const loans=await Loan.find(query).populate({  //populate used to replace referenced ObjectIds with actual document data.
-            path:"bank"
-        }).sort({createdAt:-1});  //Sorts the job results by the createdAt field in descending order (-1 means newest first).
-        if(loans.length === 0){
-            return res.status(400).json({
-                message:"Loans not found",
-                success:false
-            })
-        }
-        //if jobs are found
-        return res.status(200).json({
-            loans,
-            success:true
-        })
+let query = {};
+const orConditions = [];
+
+// ✅ Numeric search
+if (!isNaN(keyword) && keyword !== "") {
+  const tenureVal = parseInt(keyword, 10);
+  const loanAmountVal = parseInt(keyword, 10);
+  const interestRateVal = parseFloat(keyword);
+
+  if (!isNaN(tenureVal)) orConditions.push({ tenure: tenureVal });
+  if (!isNaN(loanAmountVal)) orConditions.push({ loanAmount: loanAmountVal });
+  if (!isNaN(interestRateVal)) orConditions.push({ interestRate: interestRateVal });
+}
+
+// ✅ Text search (case-insensitive regex)
+if (keyword && isNaN(keyword)) {
+  orConditions.push(
+    { title: { $regex: keyword, $options: "i" } },
+    { description: { $regex: keyword, $options: "i" } },
+    // If bank has "name", we need nested populate filtering → use aggregation or filter after populate
+  );
+}
+
+// ✅ Only add $or if conditions exist
+if (orConditions.length > 0) {
+  query.$or = orConditions;
+}
+
+const loans = await Loan.find(query)
+  .populate("bank")
+  .sort({ createdAt: -1 });
+
+if (loans.length === 0) {
+  return res.status(400).json({
+    message: "Loans not found",
+    success: false,
+  });
+}
+
+return res.status(200).json({
+  loans,
+  success: true,
+});
+
 
     } catch (error) {
         console.log(error);

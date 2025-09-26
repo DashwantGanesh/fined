@@ -9,7 +9,7 @@ const loanSchema = new mongoose.Schema(
     },
     bank: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "bank",
+      ref: "Bank",
       required: true,
     },
     title: {

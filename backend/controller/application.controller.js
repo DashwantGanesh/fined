@@ -54,7 +54,7 @@ export const applyLoan=async(req,res)=>{
 export const getAppliedLoans=async(req,res)=>{
     try {
         const userId=req.id;
-        const application=(await Application.find({applicant:userId})).toSorted({createdAt:-1}).populate({
+        const application=await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
             path:"loan",
             options:{sort:{createdAt:-1}},
             populate:{
@@ -80,7 +80,7 @@ export const getAppliedLoans=async(req,res)=>{
 //getting applicants who have applied for loan posted by bank manager
 export const getApplicants=async(req,res)=>{
     try {
-        const loanId=req.params.is;
+        const loanId=req.params.id;
        const loan=await Loan.findById(loanId).populate({
         path:"applications",
         options:{sort:{createdAt:-1}},
@@ -90,7 +90,7 @@ export const getApplicants=async(req,res)=>{
         }
        });
         if(!loan){
-            return req.status(400).json({
+            return res.status(400).json({
                 message:"Loan not found",
                 success:false
             });

@@ -1,4 +1,7 @@
-import { Bank } from "../models/bank.model.js";
+import cloudinary from "cloudinary";             // For file uploads
+import {Bank} from "../models/bank.model.js";       // Your Mongoose model
+// import getDataUri from "../utils/dataUri.js";    // Utility to convert file buffer → Data URI
+
 
 //registeration of bank
 export const registerBank=async(req,res)=>{

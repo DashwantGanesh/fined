@@ -10,6 +10,6 @@ const router =express.Router();
 router.route("/register").post(isAuthenticated,isAdmin,registerBank);
 router.route("/get").get(isAuthenticated,isAdmin,getBanks);
 router.route("/get/:id").get(isAuthenticated,isAdmin,getBankById);
-router.route("/update/:id").get(isAuthenticated,isAdmin,updateBank);
+router.route("/update/:id").post(isAuthenticated,isAdmin,updateBank);
 
 export default router;
