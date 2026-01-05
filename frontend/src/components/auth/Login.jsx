@@ -3,7 +3,13 @@ import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
+import { USER_API_ENDPOINT } from "../utils/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/authSlice";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -12,6 +18,10 @@ const Login = () => {
     password: "",
     role: "",
   });
+
+  const { loading } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     setInput({
@@ -22,7 +32,26 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(input);
+
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.post(`${USER_API_ENDPOINT}/login`, input, {
+        headers: {
+          "Content-Type": "application/json", //You tell axios that you are sending images/files, so you set"Content-Type": "multipart/form-data".
+        },
+        withCredentials: true, //withCredentials: true means you want cookies (like tokens) to be included.
+      });
+      if (res.data.success) {
+        navigate("/");
+
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
   return (
@@ -95,10 +124,16 @@ const Login = () => {
                 </label>
               </div>
             </div>
-
-            <Button type="submit" className="w-full mt-6">
-              Login
-            </Button>
+            {loading ? (
+              <Button className={w-full}>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please Wait
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full mt-6">
+                Login
+              </Button>
+            )}
 
             <p className="text-sm mt-4">
               Don't have an account?{" "}
