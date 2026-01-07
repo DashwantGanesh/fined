@@ -9,15 +9,16 @@ env.config();
 export const register = async (req,res) =>{
     try {
         const {fullname,email,phoneNumber,password,role}=req.body;
+        console.log(fullname,email,phoneNumber,password,role);
         if(!fullname || !email || !phoneNumber || !password || !role){
-           return req.status(400).json({
+           return res.status(400).json({
                 message:"Data incomplete",
                 success:false,
             })
         }
            const user= await User.findOne({email});
              if(user){
-                return req.status(400).json({
+                return res.status(400).json({
                     message:"User already exist.",
                     success:false,
                 })

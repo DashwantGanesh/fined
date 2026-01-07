@@ -125,7 +125,7 @@ const Login = () => {
               </div>
             </div>
             {loading ? (
-              <Button className={w-full}>
+              <Button className="w-full">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please Wait
               </Button>

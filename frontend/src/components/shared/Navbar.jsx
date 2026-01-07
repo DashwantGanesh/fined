@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   const user = false;
   return (
-    <div className="bg-blue-50">
+    <div className="bg-gray-50">
       <div className="flex items-center justify-between mx-auto h-16 max-w-7xl ">
         <div>
           <h1 className="text-2xl font-bold">
@@ -18,15 +18,15 @@ const Navbar = () => {
         </div>
         <div className="flex gap-12 items-center">
           <ul className="flex font-medium items-center gap-5">
-            <li>Home</li>
-            <li>Loans</li>
-            <li>Browse</li>
+            <li><Link to='/'>Home</Link></li>
+            <li><Link to='/compare'>Compare</Link></li>
+            <li><Link to="/learn">Learn</Link></li>
           </ul>
           {
           !user ? (
             <div className="flex gap-2 items-center ">
               <Link to={'/login'}><Button variant="outline" className='cursor-pointer'>Login</Button></Link>
-              <Link to={'signup'}><Button className="bg-[#6A38C2] hover:bg-[#4a0bb8] cursor-pointer">SignUp</Button></Link>
+              <Link to={'/signup'}><Button className="bg-[#6A38C2] hover:bg-[#4a0bb8] cursor-pointer">SignUp</Button></Link>
               
               
             </div>

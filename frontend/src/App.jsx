@@ -6,6 +6,8 @@ import Signup from './components/auth/signup'
 import Home from './components/Home'
 import CompareLoans from './components/CompareLoans'
 import LearnFinance from './components/LearnFinance'
+import Loans from './components/Loans'
+import Browse from './components/Browse'
 
 const appRouter=createBrowserRouter([
   {

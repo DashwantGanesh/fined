@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "./shared/Navbar";
 
 export default function LearnFinance() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -39,6 +40,7 @@ export default function LearnFinance() {
   };
 
   return (
+    <div><Navbar />
     <section className="bg-gray-50 py-16">
       <div className="max-w-5xl mx-auto px-6">
 
@@ -90,5 +92,6 @@ export default function LearnFinance() {
 
       </div>
     </section>
+    </div>
   );
 }
