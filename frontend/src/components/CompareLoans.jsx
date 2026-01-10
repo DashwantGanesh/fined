@@ -1,24 +1,46 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "./shared/Navbar";
 
 export default function CompareLoans() {
   const { state } = useLocation();
+  const navigate = useNavigate();
+
   const loanType = state?.loanType || "Personal";
   const amount = state?.amount || 500000;
 
   const [sortBy, setSortBy] = useState("rate");
 
   const loanOffers = [
-    { bank: "HDFC Bank", rate: 9.5, fee: 2000 },
-    { bank: "ICICI Bank", rate: 10.2, fee: 1500 },
-    { bank: "Axis Bank", rate: 9.8, fee: 1000 }
+    {
+      bank: "HDFC Bank",
+      rate: 9.5,
+      fee: 2000,
+      description:
+        "HDFC offers competitive interest rates with flexible repayment options.",
+      tenure: "Up to 5 years"
+    },
+    {
+      bank: "ICICI Bank",
+      rate: 10.2,
+      fee: 1500,
+      description:
+        "ICICI personal loans come with fast approval and minimal documentation.",
+      tenure: "Up to 7 years"
+    },
+    {
+      bank: "Axis Bank",
+      rate: 9.8,
+      fee: 1000,
+      description:
+        "Axis Bank provides low processing fees and transparent loan terms.",
+      tenure: "Up to 6 years"
+    }
   ];
 
-  // EMI calculation
   const calculateEMI = (rate) => {
     const monthlyRate = rate / 12 / 100;
-    const tenureMonths = 60; // 5 years default
+    const tenureMonths = 60;
 
     return Math.round(
       (amount * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
@@ -26,7 +48,6 @@ export default function CompareLoans() {
     );
   };
 
-  // Sorting logic
   const sortedLoans = [...loanOffers].sort((a, b) => {
     if (sortBy === "rate") return a.rate - b.rate;
     if (sortBy === "emi") return calculateEMI(a.rate) - calculateEMI(b.rate);
@@ -71,11 +92,20 @@ export default function CompareLoans() {
               return (
                 <div
                   key={i}
-                  className={`relative bg-white p-6 rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-1
+                  onClick={() =>
+                    navigate("/loan-details", {
+                      state: {
+                        loan,
+                        loanType,
+                        amount,
+                        emi
+                      }
+                    })
+                  }
+                  className={`cursor-pointer relative bg-white p-6 rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-1
                     ${isBest ? "border-2 border-blue-600" : ""}
                   `}
                 >
-                  {/* Best Badge */}
                   {isBest && (
                     <span className="absolute top-4 right-4 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
                       Best Choice
@@ -86,21 +116,13 @@ export default function CompareLoans() {
                     {loan.bank}
                   </h3>
 
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600">
                     Interest Rate: <b>{loan.rate}%</b>
-                  </p>
-
-                  <p className="text-sm text-gray-600 mb-2">
-                    Processing Fee: ₹{loan.fee}
                   </p>
 
                   <p className="text-lg font-bold text-blue-700 mt-4">
                     EMI: ₹{emi.toLocaleString()}
                   </p>
-
-                  <button className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                    Apply Now
-                  </button>
                 </div>
               );
             })}
