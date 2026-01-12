@@ -1,17 +1,24 @@
-import { useState } from "react";
 import Navbar from "./shared/Navbar";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Profile() {
-  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
-  const [user, setUser] = useState({
+  // Profile image (read-only here)
+  const [profileImage] = useState(
+    "https://github.com/shadcn.png"
+  );
+
+  // User data (will later come from backend)
+  const user = {
     name: "Ganesh Dashwant",
     email: "ganesh@email.com",
     phone: "9876543210",
     employment: "Salaried",
     income: "50,000"
-  });
+  };
 
   const applications = [
     {
@@ -36,15 +43,6 @@ export default function Profile() {
     return "bg-yellow-100 text-yellow-700";
   };
 
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = () => {
-    // 🔥 Later: call backend API here
-    setIsEditing(false);
-  };
-
   return (
     <>
       <Navbar />
@@ -52,12 +50,13 @@ export default function Profile() {
       <section className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen py-12">
         <div className="max-w-6xl mx-auto px-6 space-y-10">
 
-          {/* PROFILE HEADER */}
+          {/* ================= PROFILE HEADER ================= */}
           <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6">
+
               <Avatar className="w-24 h-24">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  src={profileImage}
                   alt="profile"
                   className="object-cover"
                 />
@@ -77,15 +76,16 @@ export default function Profile() {
               </div>
             </div>
 
+            {/* Navigate to separate edit page */}
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => navigate("/update-profile")}
               className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               Edit Profile
             </button>
           </div>
 
-          {/* PERSONAL INFO */}
+          {/* ================= PERSONAL INFO ================= */}
           <div className="bg-white rounded-2xl shadow p-6">
             <h3 className="text-lg font-semibold mb-6">
               Personal Information
@@ -108,7 +108,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* LOAN APPLICATIONS */}
+          {/* ================= LOAN APPLICATIONS ================= */}
           <div className="bg-white rounded-2xl shadow p-6">
             <h3 className="text-lg font-semibold mb-6">
               Your Loan Applications
@@ -143,106 +143,6 @@ export default function Profile() {
               ))}
             </div>
           </div>
-
-          {/* EDIT MODAL */}
-          {isEditing && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-scaleIn">
-
-      {/* Header */}
-      <div className="mb-6 text-center">
-        <h3 className="text-2xl font-bold text-gray-800">
-          Edit Profile
-        </h3>
-        <p className="text-sm text-gray-500">
-          Update your personal details below
-        </p>
-      </div>
-
-      {/* Form */}
-      <div className="space-y-4">
-
-        {/* Name */}
-        <div>
-          <label className="text-sm font-medium text-gray-600">
-            Full Name
-          </label>
-          <input
-            name="name"
-            value={user.name}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-xl border px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Enter full name"
-          />
-        </div>
-
-        {/* Phone */}
-        <div>
-          <label className="text-sm font-medium text-gray-600">
-            Phone Number
-          </label>
-          <input
-            name="phone"
-            value={user.phone}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-xl border px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Enter phone number"
-          />
-        </div>
-
-        {/* Employment */}
-        <div>
-          <label className="text-sm font-medium text-gray-600">
-            Employment Type
-          </label>
-          <select
-            name="employment"
-            value={user.employment}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-xl border px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            <option>Salaried</option>
-            <option>Self Employed</option>
-            <option>Student</option>
-            <option>Unemployed</option>
-          </select>
-        </div>
-
-        {/* Income */}
-        <div>
-          <label className="text-sm font-medium text-gray-600">
-            Monthly Income (₹)
-          </label>
-          <input
-            name="income"
-            value={user.income}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-xl border px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="e.g. 50000"
-          />
-        </div>
-
-      </div>
-
-      {/* Actions */}
-      <div className="mt-8 flex justify-end gap-3">
-        <button
-          onClick={() => setIsEditing(false)}
-          className="px-5 py-2.5 rounded-xl border text-gray-600 hover:bg-gray-100 transition"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
-        >
-          Save Changes
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
 
         </div>
       </section>

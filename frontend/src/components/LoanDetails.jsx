@@ -30,7 +30,7 @@ export default function LoanDetails() {
 
           <button
             onClick={() => navigate(-1)}
-            className="text-blue-600 mb-6"
+            className="text-blue-600 mb-6 cursor-pointer"
           >
             ← Back to comparison
           </button>

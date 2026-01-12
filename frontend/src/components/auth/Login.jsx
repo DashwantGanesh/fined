@@ -110,6 +110,7 @@ const Login = () => {
                     checked={input.role == "recipient"}
                     onChange={changeEventHandler}
                     value="recipient"
+                    className="cursor-pointer"
                   />
                   Recipient
                 </label>
@@ -120,6 +121,7 @@ const Login = () => {
                     checked={input.role == "bank"}
                     onChange={changeEventHandler}
                     value="bank"
+                    className="cursor-pointer"
                   />
                   Bank
                 </label>

@@ -8,6 +8,7 @@ import CompareLoans from './components/CompareLoans'
 import LearnFinance from './components/LearnFinance'
 import Profile from './components/Profile'
 import LoanDetails from './components/LoanDetails'
+import UpdateProfile from './components/UpdateProfile'
 
 
 const appRouter=createBrowserRouter([
@@ -38,6 +39,10 @@ const appRouter=createBrowserRouter([
   {
     path:"/profile",
     element:<Profile />
+  },
+  {
+    path:"/update-profile",
+    element:<UpdateProfile />
   }
 ])
 
