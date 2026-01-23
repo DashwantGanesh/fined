@@ -22,10 +22,6 @@ const userSchema =new mongoose.Schema({
         enum:['recipient','bank'],
         required:true
     },
-    income:{
-        type:Number,
-        required:true
-    },
     profile:{
         course:{type:String},
         courseDuration:{type:Number},

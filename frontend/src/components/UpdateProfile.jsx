@@ -159,7 +159,6 @@ const UpdateProfile = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  onClick={"/profile"}
                   className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   {loading ? "Saving..." : "Save Changes"}
