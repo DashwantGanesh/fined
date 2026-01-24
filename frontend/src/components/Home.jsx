@@ -5,8 +5,10 @@ import LoanCompareWidget from './LoanCompareWidget'
 import WhyFined from './WhyFined'
 import HowItWorks from './HowItWorks'
 import EMICalculator from './EMICalculator'
+import useGetAllLoans from '@/hooks/useGetAllLoans'
 
 const Home = () => {
+  useGetAllLoans();
   return (
     <div>
         <Navbar />

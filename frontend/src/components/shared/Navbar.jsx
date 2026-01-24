@@ -3,12 +3,30 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { LogOut, User2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { USER_API_ENDPOINT } from "../utils/constant";
+import { setUser } from "@/redux/authSlice";
+import { toast } from "sonner";
+import axios from "axios";
 
 const Navbar = () => {
-  
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
   const {user}=useSelector(store=>store.auth);
+  const logoutHandler = async()=>{
+    try {
+      const res= await axios.get(`${USER_API_ENDPOINT}/logout`,{withCredentials:true});
+      if(res.data.success){
+        dispatch(setUser(null));
+        navigate("/");
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response.data.message);
+    }
+  }
   return (
     <div className="bg-gray-50">
       <div className="flex items-center justify-between mx-auto h-16 max-w-7xl ">
@@ -68,7 +86,7 @@ const Navbar = () => {
                     </div>
                     <div className="flex w-fit gap-2 items-center cursor-pointer">
                       <LogOut />
-                      <Button variant="link" className="cursor-pointer">
+                      <Button onClick={logoutHandler} variant="link" className="cursor-pointer">
                         Logout
                       </Button>
                     </div>
