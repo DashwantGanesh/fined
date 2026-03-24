@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "./shared/Navbar";
+import { useSelector } from "react-redux";
 
 export default function CompareLoans() {
   const { state } = useLocation();
@@ -11,33 +12,13 @@ export default function CompareLoans() {
 
   const [sortBy, setSortBy] = useState("rate");
 
-  const loanOffers = [
-    {
-      bank: "HDFC Bank",
-      rate: 9.5,
-      fee: 2000,
-      description:
-        "HDFC offers competitive interest rates with flexible repayment options.",
-      tenure: "Up to 5 years"
-    },
-    {
-      bank: "ICICI Bank",
-      rate: 10.2,
-      fee: 1500,
-      description:
-        "ICICI personal loans come with fast approval and minimal documentation.",
-      tenure: "Up to 7 years"
-    },
-    {
-      bank: "Axis Bank",
-      rate: 9.8,
-      fee: 1000,
-      description:
-        "Axis Bank provides low processing fees and transparent loan terms.",
-      tenure: "Up to 6 years"
-    }
-  ];
+  // ✅ FIX 1: Correct slice name
+  const { allLoans } = useSelector((store) => store.loan);
 
+  // ✅ FIX 2: Use Redux loans instead of static data
+  const loanOffers = allLoans || [];
+
+  // EMI calculation
   const calculateEMI = (rate) => {
     const monthlyRate = rate / 12 / 100;
     const tenureMonths = 60;
@@ -48,9 +29,11 @@ export default function CompareLoans() {
     );
   };
 
+  // ✅ FIX 3: Use interestRate from DB instead of rate
   const sortedLoans = [...loanOffers].sort((a, b) => {
-    if (sortBy === "rate") return a.rate - b.rate;
-    if (sortBy === "emi") return calculateEMI(a.rate) - calculateEMI(b.rate);
+    if (sortBy === "rate") return a.interestRate - b.interestRate;
+    if (sortBy === "emi")
+      return calculateEMI(a.interestRate) - calculateEMI(b.interestRate);
     return 0;
   });
 
@@ -86,12 +69,12 @@ export default function CompareLoans() {
           {/* Loan Cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {sortedLoans.map((loan, i) => {
-              const emi = calculateEMI(loan.rate);
+              const emi = calculateEMI(loan.interestRate);
               const isBest = i === 0;
 
               return (
                 <div
-                  key={i}
+                  key={loan._id}
                   onClick={() =>
                     navigate("/loan-details", {
                       state: {
@@ -112,12 +95,13 @@ export default function CompareLoans() {
                     </span>
                   )}
 
+                  {/* ✅ FIX 4: Show dynamic bank name */}
                   <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                    {loan.bank}
+                    {loan?.bank?.name || "Bank"}
                   </h3>
 
                   <p className="text-sm text-gray-600">
-                    Interest Rate: <b>{loan.rate}%</b>
+                    Interest Rate: <b>{loan.interestRate}%</b>
                   </p>
 
                   <p className="text-lg font-bold text-blue-700 mt-4">

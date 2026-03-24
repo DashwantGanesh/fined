@@ -36,8 +36,10 @@ export default function LoanDetails() {
           </button>
 
           <div className="bg-white p-8 rounded-2xl shadow space-y-6">
+            
+            {/* ✅ FIX 1: bank.name instead of object */}
             <h1 className="text-3xl font-bold">
-              {loan.bank} – {loanType}
+              {loan?.bank?.name || "Bank"} – {loanType}
             </h1>
 
             <p className="text-gray-600">
@@ -45,27 +47,35 @@ export default function LoanDetails() {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6">
+              
               <div>
                 <p className="text-sm text-gray-500">Loan Amount</p>
                 <p className="font-semibold">
-                  ₹{amount.toLocaleString()}
+                  ₹{loan.loanAmount.toLocaleString()}
                 </p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-500">Interest Rate</p>
-                <p className="font-semibold">{loan.rate}%</p>
+                
+                {/* ✅ FIX 2: interestRate instead of rate */}
+                <p className="font-semibold">{loan.interestRate}%</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-500">Tenure</p>
-                <p className="font-semibold">{loan.tenure}</p>
+                <p className="font-semibold">{loan.tenure} months</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-500">Processing Fee</p>
-                <p className="font-semibold">₹{loan.fee}</p>
+                
+                {/* ✅ FIX 3: fallback (since fee not in DB) */}
+                <p className="font-semibold">
+                  ₹{loan.processingFee || "N/A"}
+                </p>
               </div>
+
             </div>
 
             <div className="bg-blue-50 p-4 rounded-xl">
@@ -75,9 +85,22 @@ export default function LoanDetails() {
               </p>
             </div>
 
+            {/* ✅ Optional: show bank website */}
+            {loan?.bank?.website && (
+              <a
+                href={loan.bank.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-blue-600 underline"
+              >
+                Visit Bank Website
+              </a>
+            )}
+
             <button className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition">
               Apply for this Loan
             </button>
+
           </div>
 
         </div>
