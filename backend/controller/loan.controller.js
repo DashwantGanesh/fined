@@ -35,9 +35,102 @@ export const postLoan=async(req,res)=>{
     }
 }
 
+//getting all loans
+export const getAllLoans = async (req, res) => {
+  try {
+    const keyword = req.query.keyword?.trim() || "";
+    const minAmount = req.query.minAmount;
+    const maxAmount = req.query.maxAmount;
+    const minRate = req.query.minRate;
+    const maxRate = req.query.maxRate;
+    const tenure = req.query.tenure;
+    const sort = req.query.sort || "latest";
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    const orConditions = [];
+
+    // 🔍 Keyword search
+    if (!isNaN(keyword) && keyword !== "") {
+      const num = Number(keyword);
+      orConditions.push(
+        { tenure: num },
+        { loanAmount: num },
+        { interestRate: num }
+      );
+    }
+
+    if (keyword && isNaN(keyword)) {
+      orConditions.push(
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } }
+      );
+    }
+
+    if (orConditions.length > 0) {
+      query.$or = orConditions;
+    }
+
+    // 💰 Loan Amount Filter
+    if (minAmount || maxAmount) {
+      query.loanAmount = {};
+      if (minAmount) query.loanAmount.$gte = Number(minAmount);
+      if (maxAmount) query.loanAmount.$lte = Number(maxAmount);
+    }
+
+    // 📊 Interest Rate Filter
+    if (minRate || maxRate) {
+      query.interestRate = {};
+      if (minRate) query.interestRate.$gte = Number(minRate);
+      if (maxRate) query.interestRate.$lte = Number(maxRate);
+    }
+
+    // ⏳ Tenure Filter
+    if (tenure) {
+      query.tenure = Number(tenure);
+    }
+
+    // 🔽 Sorting Logic
+    let sortOption = {};
+    if (sort === "low") sortOption.loanAmount = 1;
+    else if (sort === "high") sortOption.loanAmount = -1;
+    else sortOption.createdAt = -1; // latest
+
+    // 📦 Execute Query
+    const loans = await Loan.find(query)
+      .populate("bank")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Loan.countDocuments(query);
+
+    if (loans.length === 0) {
+      return res.status(404).json({
+        message: "Loans not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      loans,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      success: true,
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //getting loan by filter (student)
 
-export const getAllLoans=async (req,res)=>{
+export const getAllSpLoans=async (req,res)=>{
     try {
 const keyword = req.query.keyword?.trim() || "";
 

@@ -1,5 +1,6 @@
 import { LOAN_API_ENDPOINT } from '@/components/utils/constant'
 import { setAllLoans } from '@/redux/loanSlice';
+import axios from 'axios';
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -17,8 +18,8 @@ const useGetAllLoans = () => {
             console.log(error);
         }
     }
-    fetchAllLoans;
+    fetchAllLoans();
  },[])
 }
 
-export default useGetAllLoans
+export default useGetAllLoans;
