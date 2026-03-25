@@ -1,24 +1,46 @@
 import Navbar from "./shared/Navbar";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Profile() {
   const navigate = useNavigate();
 
-  // Profile image (read-only here)
-  const [profileImage] = useState(
-    "https://github.com/shadcn.png"
-  );
+  const [profileImage] = useState("https://github.com/shadcn.png");
 
-  // User data (will later come from backend)
-  const user = {
-    name: "Ganesh Dashwant",
-    email: "ganesh@email.com",
-    phone: "9876543210",
-    employment: "Salaried",
-    income: "50,000"
-  };
+  // ✅ Dynamic user state
+  const [user, setUser] = useState(null);
+
+  // ✅ Fetch user from backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/api/v1/user/profile",
+          { withCredentials: true },
+        );
+
+        setUser(res.data.user);
+      } catch (error) {
+        console.error(error.response?.data || error.message);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // ✅ Loading state
+  if (!user) {
+    return (
+      <>
+        <Navbar />
+        <div className="text-center mt-20 text-gray-600">
+          Loading profile...
+        </div>
+      </>
+    );
+  }
 
   const applications = [
     {
@@ -26,15 +48,15 @@ export default function Profile() {
       type: "Personal Loan",
       amount: 500000,
       status: "Under Review",
-      date: "12 Sep 2025"
+      date: "12 Sep 2025",
     },
     {
       bank: "Axis Bank",
       type: "Education Loan",
       amount: 800000,
       status: "Approved",
-      date: "01 Sep 2025"
-    }
+      date: "01 Sep 2025",
+    },
   ];
 
   const statusColor = (status) => {
@@ -49,11 +71,9 @@ export default function Profile() {
 
       <section className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen py-12">
         <div className="max-w-6xl mx-auto px-6 space-y-10">
-
           {/* ================= PROFILE HEADER ================= */}
           <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6">
-
               <Avatar className="w-24 h-24">
                 <AvatarImage
                   src={profileImage}
@@ -61,13 +81,13 @@ export default function Profile() {
                   className="object-cover"
                 />
                 <AvatarFallback className="text-2xl">
-                  {user.name[0]}
+                  {user.fullname?.[0]}
                 </AvatarFallback>
               </Avatar>
 
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
-                  {user.name}
+                  {user.fullname}
                 </h2>
                 <p className="text-gray-600">{user.email}</p>
                 <span className="inline-block mt-2 text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700">
@@ -76,7 +96,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Navigate to separate edit page */}
             <button
               onClick={() => navigate("/update-profile")}
               className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -87,21 +106,28 @@ export default function Profile() {
 
           {/* ================= PERSONAL INFO ================= */}
           <div className="bg-white rounded-2xl shadow p-6">
-            <h3 className="text-lg font-semibold mb-6">
-              Personal Information
-            </h3>
+            <h3 className="text-lg font-semibold mb-6">Personal Information</h3>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { label: "Phone", value: user.phone },
-                { label: "Employment", value: user.employment },
-                { label: "Monthly Income", value: `₹${user.income}` },
-                { label: "Email", value: user.email }
+                { label: "Phone", value: user.phoneNumber },
+                {
+                  label: "Employment",
+                  value: user.profile?.employment || "Not Set",
+                },
+                {
+                  label: "Monthly Income",
+                  value:
+                    user.profile?.employment === "Student"
+                      ? "N/A"
+                      : `₹${user.profile?.income || 0}`,
+                },
+                { label: "Email", value: user.email },
               ].map((item, i) => (
                 <div key={i} className="border rounded-xl p-4">
                   <p className="text-sm text-gray-500">{item.label}</p>
                   <p className="font-semibold text-gray-800">
-                    {item.value}
+                    {item.value || "N/A"}
                   </p>
                 </div>
               ))}
@@ -121,9 +147,7 @@ export default function Profile() {
                   className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border rounded-xl p-5 hover:shadow-lg transition"
                 >
                   <div>
-                    <h4 className="font-semibold text-gray-800">
-                      {app.bank}
-                    </h4>
+                    <h4 className="font-semibold text-gray-800">{app.bank}</h4>
                     <p className="text-sm text-gray-600">
                       {app.type} • ₹{app.amount.toLocaleString()}
                     </p>
@@ -134,7 +158,7 @@ export default function Profile() {
 
                   <span
                     className={`px-4 py-1 rounded-full text-sm font-medium ${statusColor(
-                      app.status
+                      app.status,
                     )}`}
                   >
                     {app.status}
@@ -143,7 +167,6 @@ export default function Profile() {
               ))}
             </div>
           </div>
-
         </div>
       </section>
     </>

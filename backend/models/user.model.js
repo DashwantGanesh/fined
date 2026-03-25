@@ -1,39 +1,54 @@
 import mongoose from "mongoose";
 
-const userSchema =new mongoose.Schema({
-    fullname:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        unique:true
-    },
-    phoneNumber:{
-        type:Number,
-        required:true
-    },
-    password:{
-        type:String,
-        required:true
-    },
-    role:{
-        type:String,
-        enum:['recipient','bank'],
-        required:true
-    },
-    profile:{
-        course:{type:String},
-        courseDuration:{type:Number},
-        aadharCard:{type:String},
-        panCard:{type:String},
-        bank:{type:mongoose.Schema.Types.ObjectId,ref:'Bank'},
-        profilePhoto:{
-            type:String,
-            default:""
-        }
+const userSchema = new mongoose.Schema(
+  {
+    fullname: {
+      type: String,
+      required: true
     },
 
-},{timeStamps:true});
+    email: {
+      type: String,
+      unique: true,
+      required: true
+    },
 
-export const User=mongoose.model("User",userSchema);
+    phoneNumber: {
+      type: String, // ✅ better as string (no formatting issues)
+      required: true
+    },
+
+    password: {
+      type: String,
+      required: true
+    },
+
+    role: {
+      type: String,
+      enum: ["recipient", "bank"],
+      required: true
+    },
+
+    // ✅ NEW: Profile fields
+    profile: {
+      employment: {
+        type: String,
+        enum: ["Salaried", "Self Employed", "Student", "Unemployed"],
+        default: ""
+      },
+
+      income: {
+        type: Number,
+        default: 0
+      },
+
+      avatar: {
+        type: String, // image URL (Cloudinary later)
+        default: ""
+      }
+    }
+  },
+  { timestamps: true } // ✅ FIX (you had typo)
+);
+
+export const User = mongoose.model("User", userSchema);

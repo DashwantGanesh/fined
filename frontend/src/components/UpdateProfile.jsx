@@ -9,29 +9,32 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
+    fullname: "",
+    phoneNumber: "",
     employment: "",
     income: ""
   });
 
   /* ----------------------------------------
-     FETCH USER DATA (ON PAGE LOAD)
-     ---------------------------------------- */
+     FETCH USER DATA
+  ---------------------------------------- */
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/v1/user/profile", 
+          "http://localhost:3000/api/v1/user/profile",
           { withCredentials: true }
         );
 
+        const user = res.data.user;
+
         setFormData({
-          name: res.data.user.name,
-          phone: res.data.user.phone,
-          employment: res.data.user.employment,
-          income: res.data.user.income
+          fullname: user.fullname || "",
+          phoneNumber: user.phoneNumber || "",
+          employment: user.profile?.employment || "",
+          income: user.profile?.income || ""
         });
+
       } catch (error) {
         console.error(error.response?.data || error.message);
       }
@@ -41,32 +44,50 @@ const UpdateProfile = () => {
   }, []);
 
   /* ----------------------------------------
-     HANDLE INPUT CHANGE
-     ---------------------------------------- */
+     HANDLE CHANGE
+  ---------------------------------------- */
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // ✅ if student → clear income
+    if (name === "employment" && value === "Student") {
+      setFormData({
+        ...formData,
+        employment: value,
+        income: ""
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   /* ----------------------------------------
-     UPDATE PROFILE API CALL
-     ---------------------------------------- */
+     SUBMIT
+  ---------------------------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       await axios.put(
-        "http://localhost:3000/api/v1/user/profile/update", // 🔴 REPLACE THIS API IF NEEDED
+        "http://localhost:3000/api/v1/user/profile/update",
         {
-          name: formData.name,
-          phone: formData.phone,
+          fullname: formData.fullname,
+          phoneNumber: formData.phoneNumber,
           employment: formData.employment,
-          income: formData.income
+          income:
+            formData.employment === "Student"
+              ? 0
+              : formData.income
         },
         { withCredentials: true }
       );
 
       navigate("/profile");
+
     } catch (error) {
       console.error(error.response?.data || error.message);
     } finally {
@@ -85,38 +106,38 @@ const UpdateProfile = () => {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               Update Profile
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
-              Keep your personal information up to date
-            </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
+              {/* FULL NAME */}
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Full Name
                 </label>
                 <input
-                  name="name"
-                  value={formData.name}
+                  name="fullname"
+                  value={formData.fullname}
                   onChange={handleChange}
                   className="mt-1 w-full rounded-xl border px-4 py-2.5"
                   required
                 />
               </div>
 
+              {/* PHONE */}
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Phone Number
                 </label>
                 <input
-                  name="phone"
-                  value={formData.phone}
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   className="mt-1 w-full rounded-xl border px-4 py-2.5"
                   required
                 />
               </div>
 
+              {/* EMPLOYMENT */}
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Employment Type
@@ -135,18 +156,27 @@ const UpdateProfile = () => {
                 </select>
               </div>
 
+              {/* INCOME */}
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Monthly Income (₹)
                 </label>
                 <input
+                  type="number"
                   name="income"
-                  value={formData.income}
+                  value={formData.employment === "Student" ? "" : formData.income}
+                  disabled={formData.employment === "Student"}
                   onChange={handleChange}
+                  placeholder={
+                    formData.employment === "Student"
+                      ? "N/A (Not applicable)"
+                      : "Enter income"
+                  }
                   className="mt-1 w-full rounded-xl border px-4 py-2.5"
                 />
               </div>
 
+              {/* BUTTONS */}
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
@@ -159,7 +189,7 @@ const UpdateProfile = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
                 >
                   {loading ? "Saving..." : "Save Changes"}
                 </button>

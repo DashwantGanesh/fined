@@ -10,12 +10,12 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice";
+import { Loader2 } from "lucide-react";
 
 const Signup = () => {
-
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { loading } = useSelector((store) => store.auth);
-  
+
   const dispatch = useDispatch();
 
   const [input, setInput] = useState({
@@ -24,6 +24,8 @@ const Signup = () => {
     phoneNumber: "",
     password: "",
     role: "",
+    employment: "", // ✅ ADD
+    income: "",
     file: "",
   });
 
@@ -41,38 +43,41 @@ const Signup = () => {
     });
   };
 
-  const submitHandler = async (e) =>{
+  const submitHandler = async (e) => {
     e.preventDefault();
-    const formData=new FormData();
-    formData.append("fullname",input.fullname);
-    formData.append("email",input.email);
-    formData.append("phoneNumber",input.phoneNumber);
-    formData.append("password",input.password);
-    formData.append("role",input.role);
-    if(input.file){
-      formData.append("file",input.file);
+    const formData = new FormData();
+    formData.append("fullname", input.fullname);
+    formData.append("email", input.email);
+    formData.append("phoneNumber", input.phoneNumber);
+    formData.append("employment", input.employment);
+    formData.append(
+      "income",
+      input.employment === "Student" ? 0 : input.income,
+    );
+    formData.append("password", input.password);
+    formData.append("role", input.role);
+    if (input.file) {
+      formData.append("file", input.file);
     }
     try {
       dispatch(setLoading(true));
-      const res=await axios.post(`${USER_API_ENDPOINT}/register`,formData,{
-        headers:{
-          "Content-Type":"multipart/form-data"       //You tell axios that you are sending images/files, so you set"Content-Type": "multipart/form-data".
-                                                  
+      const res = await axios.post(`${USER_API_ENDPOINT}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", //You tell axios that you are sending images/files, so you set"Content-Type": "multipart/form-data".
         },
-        withCredentials:true                         //withCredentials: true means you want cookies (like tokens) to be included.
+        withCredentials: true, //withCredentials: true means you want cookies (like tokens) to be included.
       });
-      if(res.data.success){
+      if (res.data.success) {
         navigate("/login");
         toast.success(res.data.message);
       }
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
-    }finally{
+    } finally {
       dispatch(setLoading(false));
-
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-blue-50">
@@ -131,6 +136,39 @@ const Signup = () => {
             </div>
 
             <div className="my-4">
+              <Label>Employment</Label>
+              <select
+                name="employment"
+                value={input.employment}
+                onChange={changeEventHandler}
+                className="mt-1 w-full border rounded-md px-3 py-2"
+              >
+                <option value="">Select</option>
+                <option>Salaried</option>
+                <option>Self Employed</option>
+                <option>Student</option>
+                <option>Unemployed</option>
+              </select>
+            </div>
+
+            <div className="my-4">
+              <Label>Monthly Income (₹)</Label>
+              <Input
+                type="number"
+                name="income"
+                value={input.employment === "Student" ? "" : input.income}
+                disabled={input.employment === "Student"}
+                onChange={changeEventHandler}
+                placeholder={
+                  input.employment === "Student"
+                    ? "N/A (Not applicable)"
+                    : "Enter income"
+                }
+                className="mt-1"
+              />
+            </div>
+
+            <div className="my-4">
               <Label>Password</Label>
               <Input
                 type="password"
@@ -147,11 +185,26 @@ const Signup = () => {
                 <Label className="block mb-1">Role</Label>
                 <RadioGroup className="flex gap-3 mt-1">
                   <label className="flex items-center gap-2">
-                    <Input type="radio" className={"cursor-pointer"} name="role" checked={input.role=="recipient"} onChange={changeEventHandler} value="recipient" />{" "}
+                    <Input
+                      type="radio"
+                      className={"cursor-pointer"}
+                      name="role"
+                      checked={input.role == "recipient"}
+                      onChange={changeEventHandler}
+                      value="recipient"
+                    />{" "}
                     Recipient
                   </label>
                   <label className="flex items-center gap-2">
-                    <Input type="radio" className={"cursor-pointer"} name="role" checked={input.role=="bank"} onChange={changeEventHandler} value="bank" /> Bank
+                    <Input
+                      type="radio"
+                      className={"cursor-pointer"}
+                      name="role"
+                      checked={input.role == "bank"}
+                      onChange={changeEventHandler}
+                      value="bank"
+                    />{" "}
+                    Bank
                   </label>
                 </RadioGroup>
               </div>
@@ -167,7 +220,7 @@ const Signup = () => {
               </div>
             </div>
 
-             {loading ? (
+            {loading ? (
               <Button className="w-full">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please Wait
