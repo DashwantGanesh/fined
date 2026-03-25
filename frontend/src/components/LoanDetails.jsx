@@ -4,8 +4,10 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { APPLICATION_API_ENDPOINT } from "./utils/constant";
+import { useSelector } from "react-redux";
 
 export default function LoanDetails() {
+  const { user } = useSelector((store) => store.auth);
   const { state } = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,7 @@ export default function LoanDetails() {
   const { loan, loanType, amount, emi } = state || {};
 
   useEffect(() => {
-    if (!loan?._id) {
+    if (!loan?._id || !user) {
       setChecking(false); // ✅ don't get stuck if no loanId
       return;
     }
@@ -24,7 +26,7 @@ export default function LoanDetails() {
       try {
         const res = await axios.get(
           `${APPLICATION_API_ENDPOINT}/check/${loan._id}`, // ✅ port 3000
-          { withCredentials: true }
+          { withCredentials: true },
         );
         console.log("check response:", res.data); // 👈 add this to debug
         if (res.data.success) {
@@ -38,13 +40,16 @@ export default function LoanDetails() {
     };
 
     checkIfApplied();
-  }, [loan?._id]);
+  }, [loan?._id, user]);
 
   if (!state) {
     return (
       <div className="p-10 text-center">
         <p>Invalid Loan Selection</p>
-        <button onClick={() => navigate("/compare")} className="mt-4 text-blue-600 underline">
+        <button
+          onClick={() => navigate("/compare")}
+          className="mt-4 text-blue-600 underline"
+        >
           Go Back
         </button>
       </div>
@@ -57,7 +62,7 @@ export default function LoanDetails() {
       const res = await axios.post(
         `http://localhost:3000/api/v1/application/apply/${loan._id}`, // ✅ port 3000
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res.data.success) {
         toast.success("Loan applied successfully!");
@@ -76,7 +81,10 @@ export default function LoanDetails() {
       <Navbar />
       <section className="bg-gray-50 min-h-screen py-10">
         <div className="max-w-4xl mx-auto px-6">
-          <button onClick={() => navigate(-1)} className="text-blue-600 mb-6 cursor-pointer">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-blue-600 mb-6 cursor-pointer"
+          >
             ← Back to comparison
           </button>
 
@@ -89,7 +97,9 @@ export default function LoanDetails() {
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-gray-500">Loan Amount</p>
-                <p className="font-semibold">₹{loan.loanAmount.toLocaleString()}</p>
+                <p className="font-semibold">
+                  ₹{loan.loanAmount.toLocaleString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Interest Rate</p>
@@ -107,23 +117,42 @@ export default function LoanDetails() {
 
             <div className="bg-blue-50 p-4 rounded-xl">
               <p className="text-sm text-gray-600">Estimated EMI</p>
-              <p className="text-2xl font-bold text-blue-700">₹{emi.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-blue-700">
+                ₹{emi.toLocaleString()}
+              </p>
             </div>
 
             {loan?.bank?.website && (
-              <a href={loan.bank.website} target="_blank" rel="noopener noreferrer"
-                className="block text-center text-blue-600 underline">
+              <a
+                href={loan.bank.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-blue-600 underline"
+              >
                 Visit Bank Website
               </a>
             )}
 
-            {/* ✅ Show spinner while checking, then correct button */}
             {checking ? (
-              <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-xl cursor-not-allowed">
+              <button
+                disabled
+                className="w-full bg-gray-100 text-gray-400 py-3 rounded-xl cursor-not-allowed"
+              >
                 Checking status...
               </button>
+            ) : !user ? (
+              // ✅ Not logged in — show login prompt
+              <button
+                onClick={() => navigate("/login")}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition"
+              >
+                Login to Apply
+              </button>
             ) : hasApplied ? (
-              <button disabled className="w-full bg-green-100 text-green-700 border border-green-400 py-3 rounded-xl cursor-not-allowed">
+              <button
+                disabled
+                className="w-full bg-green-100 text-green-700 border border-green-400 py-3 rounded-xl cursor-not-allowed"
+              >
                 ✅ You have already applied for this loan
               </button>
             ) : (
@@ -135,7 +164,6 @@ export default function LoanDetails() {
                 {loading ? "Applying..." : "Apply for this Loan"}
               </button>
             )}
-
           </div>
         </div>
       </section>

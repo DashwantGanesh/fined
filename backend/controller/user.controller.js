@@ -150,12 +150,13 @@ export const getProfile = async (req, res) => {
   }
 };
 
+
+
 //updating the user
 
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, employment, income } = req.body;
-
     const userId = req.id;
 
     let user = await User.findById(userId);
@@ -163,13 +164,17 @@ export const updateProfile = async (req, res) => {
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
-
-    // ✅ profile updates
     if (employment) user.profile.employment = employment;
     if (income) user.profile.income = income;
 
-    await user.save();
+    // ✅ Save avatar as base64 if file uploaded
+    if (req.file) {
+      const base64 = req.file.buffer.toString("base64");
+      const mimeType = req.file.mimetype; // e.g. image/jpeg
+      user.profile.avatar = `data:${mimeType};base64,${base64}`;
+    }
 
+    await user.save();
     user = await User.findById(userId).select("-password");
 
     return res.status(200).json({
