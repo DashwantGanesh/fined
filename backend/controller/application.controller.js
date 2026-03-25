@@ -2,7 +2,7 @@ import { populate } from "dotenv";
 import { Application } from "../models/applicant.model.js";
 import { Loan } from "../models/loan.model.js";
 
-
+//applyloan
 export const applyLoan=async(req,res)=>{
     try {
         const userId=req.id;
@@ -43,7 +43,7 @@ export const applyLoan=async(req,res)=>{
 
     return res.status(201).json({
         message:"Loan Applied successfully",
-        success:false
+        success:true
     });
     } catch (error) {
         console.log(error);
