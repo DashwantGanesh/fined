@@ -40,7 +40,7 @@ export const registerBank=async(req,res)=>{
 export const getBanks= async(req,res)=>{
     try {
     const userId=req._id;
-    const banks=await Bank.find(userId);
+    const banks=await Bank.find({userId});
     if(!banks){
         return res.status(404).json({
             message:"Banks not found",

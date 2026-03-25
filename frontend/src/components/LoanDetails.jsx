@@ -3,6 +3,7 @@ import Navbar from "./shared/Navbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { APPLICATION_API_ENDPOINT } from "./utils/constant";
 
 export default function LoanDetails() {
   const { state } = useLocation();
@@ -22,7 +23,7 @@ export default function LoanDetails() {
     const checkIfApplied = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/application/check/${loan._id}`, // ✅ port 3000
+          `${APPLICATION_API_ENDPOINT}/check/${loan._id}`, // ✅ port 3000
           { withCredentials: true }
         );
         console.log("check response:", res.data); // 👈 add this to debug
