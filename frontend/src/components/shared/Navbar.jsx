@@ -49,10 +49,10 @@ const Navbar = () => {
             {user && user.role === "bank" ? (
               <>
                 <li>
-                  <Link to="/">Loans</Link>
+                  <Link to="/bank/loans">Loans</Link>
                 </li>
                 <li>
-                  <Link to="/compare">Applications</Link>
+                  <Link to="/bank/applicants">Applications</Link>
                 </li>
               </>
             ) : (
@@ -120,15 +120,16 @@ const Navbar = () => {
                   </div>
 
                   <div className="flex flex-col mt-2 cursor-pointer">
-                    {user && user.role === "Student" && (
-                      <div className="flex w-fit gap-2 items-center">
-                        <User2 className="w-4 h-4 text-gray-600" />
-                        <Button variant="link" className="cursor-pointer p-0">
-                          <Link to="/profile">View Profile</Link>
-                        </Button>
-                      </div>
-                    )}
-
+                    <div className="flex w-fit gap-2 items-center">
+                      {user?.role === "recipient" && (
+                        <>
+                          <User2 className="w-4 h-4 text-gray-600" />
+                          <Button variant="link" className="cursor-pointer p-0">
+                            <Link to="/profile">View Profile</Link>
+                          </Button>
+                        </>
+                      )}
+                    </div>
                     <div className="flex w-fit gap-2 items-center">
                       <LogOut className="w-4 h-4 text-gray-600" />
                       <Button
