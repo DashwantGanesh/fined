@@ -10,7 +10,7 @@ export const applyLoan=async(req,res)=>{
 
     //if loanId exist(bad request)
     if(!loanId){
-        res.status(400).json({
+       return res.status(400).json({
             message:"Loan id not found",
             success:false
         });
@@ -45,6 +45,23 @@ export const applyLoan=async(req,res)=>{
         message:"Loan Applied successfully",
         success:true
     });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// check if user has already applied for a specific loan
+export const checkApplication = async (req, res) => {
+    try {
+        const userId = req.id;
+        const loanId = req.params.id;
+
+        const existing = await Application.findOne({ loan: loanId, applicant: userId });
+
+        return res.status(200).json({
+            hasApplied: !!existing,
+            success: true
+        });
     } catch (error) {
         console.log(error);
     }
