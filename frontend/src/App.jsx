@@ -31,7 +31,7 @@ const appRouter = createBrowserRouter([
 
   //admin(bank) paths
   { path: "/bank/loans", element: <Loans /> },
-  { path: "/bank/applicants/:id", element: <Applicants /> },
+  { path: "/bank/applicants/:loanId", element: <Applicants /> },
   { path: "/bank/post-loan", element: <PostLoan /> },
   { path: "/bank/register", element: <RegisterBank /> },
 ]);
