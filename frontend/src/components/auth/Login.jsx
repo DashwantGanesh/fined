@@ -14,7 +14,6 @@ import { Loader2 } from "lucide-react";
 const Login = () => {
   const [input, setInput] = useState({
     email: "",
-
     password: "",
     role: "",
   });
@@ -24,10 +23,7 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
-    setInput({
-      ...input,
-      [e.target.name]: e.target.value,
-    });
+    setInput({ ...input, [e.target.name]: e.target.value });
   };
 
   const submitHandler = async (e) => {
@@ -36,20 +32,24 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(`${USER_API_ENDPOINT}/login`, input, {
-        headers: {
-          "Content-Type": "application/json", //You tell axios that you are sending images/files, so you set"Content-Type": "multipart/form-data".
-        },
-        withCredentials: true, //withCredentials: true means you want cookies (like tokens) to be included.
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       });
+
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        navigate("/");
-
         toast.success(res.data.message);
+
+        // ✅ Role-based redirect — INSIDE success block, AFTER setUser
+        if (res.data.user.role === "bank") {
+          navigate("/bank/dashboard");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       dispatch(setLoading(false));
     }
@@ -63,15 +63,13 @@ const Login = () => {
         <div className="bg-white shadow-xl rounded-xl flex w-[85%] max-w-4xl overflow-hidden">
           {/* Left Section */}
           <div className="w-1/2 bg-gradient-to-b from-blue-600 to-blue-400 text-white p-10 flex flex-col justify-center">
-            <h1 className="text-4xl font-bold mb-4 leading-tight">
-              Welcome Back
-            </h1>
+            <h1 className="text-4xl font-bold mb-4 leading-tight">Welcome Back</h1>
             <p className="text-lg opacity-90">
               Login and continue exploring smart financial solutions.
             </p>
           </div>
 
-          {/* Right Section (Login Form) */}
+          {/* Right Section */}
           <form onSubmit={submitHandler} className="w-1/2 p-10">
             <h2 className="font-semibold text-2xl mb-6">Login</h2>
 
@@ -107,7 +105,7 @@ const Login = () => {
                   <Input
                     type="radio"
                     name="role"
-                    checked={input.role == "recipient"}
+                    checked={input.role === "recipient"}
                     onChange={changeEventHandler}
                     value="recipient"
                     className="cursor-pointer"
@@ -118,7 +116,7 @@ const Login = () => {
                   <Input
                     type="radio"
                     name="role"
-                    checked={input.role == "bank"}
+                    checked={input.role === "bank"}
                     onChange={changeEventHandler}
                     value="bank"
                     className="cursor-pointer"
@@ -127,6 +125,7 @@ const Login = () => {
                 </label>
               </div>
             </div>
+
             {loading ? (
               <Button className="w-full">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

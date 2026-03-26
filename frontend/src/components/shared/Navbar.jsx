@@ -31,6 +31,8 @@ const Navbar = () => {
     }
   };
 
+
+
   // ✅ Use real avatar or fallback to shadcn placeholder
   const avatarSrc = user?.profile?.avatar || "https://github.com/shadcn.png";
 
@@ -52,7 +54,7 @@ const Navbar = () => {
                   <Link to="/bank/loans">Loans</Link>
                 </li>
                 <li>
-                  <Link to="/bank/applicants/:id">Applications</Link>
+                  <Link to="/bank/applicants/:loanId">Applications</Link>
                 </li>
               </>
             ) : (
