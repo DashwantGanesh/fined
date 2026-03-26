@@ -49,7 +49,7 @@ export default function Loans() {
               <p className="text-gray-500 mt-1">All loans you have listed</p>
             </div>
             <button
-              onClick={() => navigate("/post-loan")}
+              onClick={() => navigate("/bank/post-loan")}
               className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               + Post New Loan
@@ -65,7 +65,7 @@ export default function Loans() {
               <p className="text-5xl mb-4">🏦</p>
               <p className="text-lg font-medium">No loans posted yet.</p>
               <button
-                onClick={() => navigate("/post-loan")}
+                onClick={() => navigate("/bank/post-loan")}
                 className="mt-4 text-blue-600 underline text-sm"
               >
                 Post your first loan
@@ -120,7 +120,7 @@ export default function Loans() {
 
                   {/* View Applicants button */}
                   <button
-                    onClick={() => navigate(`/admin/applicants/${loan._id}`, { state: { loan } })}
+                    onClick={() => navigate(`/bank/applicants/${loan._id}`, { state: { loan } })}
                     className="w-full mt-2 border border-blue-600 text-blue-600 py-2 rounded-xl hover:bg-blue-50 transition text-sm font-medium"
                   >
                     View Applicants ({loan.applications?.length || 0})

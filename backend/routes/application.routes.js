@@ -4,10 +4,13 @@ import isAuthenticated from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
+// ✅ Static / specific routes FIRST
 router.route("/apply/:id").post(isAuthenticated, applyLoan);
 router.route("/get").get(isAuthenticated, getAppliedLoans);
-router.route("/:id/applicants").get(isAuthenticated, getApplicants);
+router.route("/check/:id").get(isAuthenticated, checkApplication);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
-router.route("/check/:id").get(isAuthenticated, checkApplication); // ✅ fixed
+
+// ✅ Dynamic pattern routes LAST
+router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 
 export default router;

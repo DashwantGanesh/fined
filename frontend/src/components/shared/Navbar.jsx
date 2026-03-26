@@ -52,7 +52,7 @@ const Navbar = () => {
                   <Link to="/bank/loans">Loans</Link>
                 </li>
                 <li>
-                  <Link to="/bank/applicants">Applications</Link>
+                  <Link to="/bank/applicants/:id">Applications</Link>
                 </li>
               </>
             ) : (

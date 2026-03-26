@@ -95,31 +95,36 @@ export const getAppliedLoans=async(req,res)=>{
 }
 
 //getting applicants who have applied for loan posted by bank manager
-export const getApplicants=async(req,res)=>{
+export const getApplicants = async (req, res) => {
     try {
-        const loanId=req.params.id;
-       const loan=await Loan.findById(loanId).populate({
-        path:"applications",
-        options:{sort:{createdAt:-1}},
-        populate:{
-            path:"applicant",
-            options:{sort:{createdAt:-1}}
-        }
-       });
-        if(!loan){
+        const loanId = req.params.id;
+
+        const loan = await Loan.findById(loanId)
+            .populate({
+                path: "applications",
+                options: { sort: { createdAt: -1 } },
+                populate: {
+                    path: "applicant",
+                    select: "fullname email phoneNumber profile", // ✅ explicitly select profile
+                }
+            })
+            .populate("bank"); // ✅ also populate bank so name shows in summary card
+
+        if (!loan) {
             return res.status(400).json({
-                message:"Loan not found",
-                success:false
+                message: "Loan not found",
+                success: false
             });
         }
 
         return res.status(200).json({
             loan,
-            success:true
+            success: true
         });
 
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Server error", success: false });
     }
 }
 
