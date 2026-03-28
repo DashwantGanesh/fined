@@ -10,13 +10,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 const app = express();
-const port = process.env.PORT || 3000; // ✅ from .env
+const port = process.env.PORT || 3000;
 
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",            // local dev
-      "https://fined-one.vercel.app",         // ✅ your vercel URL (update after deploy)
+      "http://localhost:5173",
+      "https://fined-one.vercel.app", // ✅ your real vercel URL
     ],
     credentials: true,
   })
@@ -32,5 +32,5 @@ app.use("/api/v1/application", applicationRoute);
 connectDB();
 
 app.listen(port, () => {
-    console.log(`Server running at port ${port}`);
+  console.log(`Server running at port ${port}`);
 });
