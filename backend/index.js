@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",            // local dev
-      "https://fined.vercel.app",         // ✅ your vercel URL (update after deploy)
+      "https://fined-one.vercel.app",         // ✅ your vercel URL (update after deploy)
     ],
     credentials: true,
   })
