@@ -1,6 +1,7 @@
-import express from "express";
 import dotenv from "dotenv";
-dotenv.config(); // ✅ must be first
+dotenv.config(); // ✅ FIRST — before everything else
+
+import express from "express";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.routes.js";
 import loanRoute from "./routes/loan.routes.js";
@@ -16,7 +17,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://fined-one.vercel.app", // ✅ your real vercel URL
+      "https://fined-one.vercel.app",
     ],
     credentials: true,
   })
