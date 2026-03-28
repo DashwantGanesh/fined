@@ -15,34 +15,36 @@ import LoanDetails from "./components/LoanDetails";
 import UpdateProfile from "./components/UpdateProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Bank (admin) pages
+// Bank pages
 import Dashboard from "./components/Bank/Dashboard";
 import Loans from "./components/Bank/Loans";
 import Applicants from "./components/Bank/Applicants";
+import AllApplications from "./components/Bank/AllApplications";
 import PostLoan from "./components/Bank/PostLoan";
 import RegisterBank from "./components/Bank/RegisterBank";
 import EditBank from "./components/Bank/EditBank";
 
 const appRouter = createBrowserRouter([
-  // ===== Public routes =====
-  { path: "/", element: <Home /> },
-  { path: "/login", element: <Login /> },
-  { path: "/signup", element: <Signup /> },
-  { path: "/learn", element: <LearnFinance /> },
+  // Public
+  { path: "/",        element: <Home /> },
+  { path: "/login",   element: <Login /> },
+  { path: "/signup",  element: <Signup /> },
+  { path: "/learn",   element: <LearnFinance /> },
 
-  // ===== Recipient only =====
-  { path: "/compare",       element: <ProtectedRoute role="recipient"><CompareLoans /></ProtectedRoute> },
-  { path: "/loan-details",  element: <ProtectedRoute role="recipient"><LoanDetails /></ProtectedRoute> },
-  { path: "/profile",       element: <ProtectedRoute role="recipient"><Profile /></ProtectedRoute> },
-  { path: "/update-profile",element: <ProtectedRoute role="recipient"><UpdateProfile /></ProtectedRoute> },
+  // Recipient only
+  { path: "/compare",        element: <ProtectedRoute role="recipient"><CompareLoans /></ProtectedRoute> },
+  { path: "/loan-details",   element: <ProtectedRoute role="recipient"><LoanDetails /></ProtectedRoute> },
+  { path: "/profile",        element: <ProtectedRoute role="recipient"><Profile /></ProtectedRoute> },
+  { path: "/update-profile", element: <ProtectedRoute role="recipient"><UpdateProfile /></ProtectedRoute> },
 
-  // ===== Bank admin only =====
-  { path: "/bank/dashboard",          element: <ProtectedRoute role="bank"><Dashboard /></ProtectedRoute> },
-  { path: "/bank/loans",              element: <ProtectedRoute role="bank"><Loans /></ProtectedRoute> },
-  { path: "/bank/applicants/:loanId", element: <ProtectedRoute role="bank"><Applicants /></ProtectedRoute> },
-  { path: "/bank/post-loan",          element: <ProtectedRoute role="bank"><PostLoan /></ProtectedRoute> },
-  { path: "/bank/register",           element: <ProtectedRoute role="bank"><RegisterBank /></ProtectedRoute> },
-  { path: "/bank/edit/:id",           element: <ProtectedRoute role="bank"><EditBank /></ProtectedRoute> },
+  // Bank admin only
+  { path: "/bank/dashboard",              element: <ProtectedRoute role="bank"><Dashboard /></ProtectedRoute> },
+  { path: "/bank/loans",                  element: <ProtectedRoute role="bank"><Loans /></ProtectedRoute> },
+  { path: "/bank/applicants/:loanId",     element: <ProtectedRoute role="bank"><Applicants /></ProtectedRoute> },
+  { path: "/bank/applications",           element: <ProtectedRoute role="bank"><AllApplications /></ProtectedRoute> },
+  { path: "/bank/post-loan",              element: <ProtectedRoute role="bank"><PostLoan /></ProtectedRoute> },
+  { path: "/bank/register",              element: <ProtectedRoute role="bank"><RegisterBank /></ProtectedRoute> },
+  { path: "/bank/edit/:id",               element: <ProtectedRoute role="bank"><EditBank /></ProtectedRoute> },
 ]);
 
 function App() {
